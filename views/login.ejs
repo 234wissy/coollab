@@ -1,0 +1,63 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#0a0dc4">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    
+    <!-- Use / because Express serves from public -->
+    <link rel="stylesheet" href="/css/form.css">
+
+    <link rel="manifest" href="/manifest.json">
+    
+    
+    <style>
+        /* body{
+            background-image: url("/b.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            height: 580px;
+        } */
+    </style>
+</head>
+
+
+<body>
+
+    <div class="login-page">
+        <div class="form">
+
+            <!-- Register Form -->
+            <form class="register-form" action="/register" method="POST">
+                <input type="text" name="username" placeholder="user name" required>
+                <input type="password" name="password" placeholder="password" required>
+                <input type="email" name="email" placeholder="email id" required>
+                <button type="submit">create</button>
+                <p class="message">Already Registered? <a href="#">Login</a></p>
+            </form>
+
+            <!-- Login Form -->
+            <form action="/login" method="POST">
+                <input type="text" name="username" placeholder="user name" required>
+                <input type="password" name="password" placeholder="password" required>
+                <button type="submit">login</button>
+                <p class="message">Not Registered? <a href="#">Register</a></p>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="/script/jquery.js"></script>
+    <script src="/script/practise2.js"></script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/sw.js")
+            .then(() => console.log("Service Worker Registered"))
+            .catch(err => console.log("SW registration failed", err));
+        }
+    </script>
+
+</body>
+</html>
