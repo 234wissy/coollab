@@ -9,9 +9,21 @@ function adminOnly(req, res, next) {
 
 // ✅ Admin landing (requires admin)
 // GET /admin
-router.get("/login", adminOnly, (req, res) => {
-  // Send admin to your real attendance dashboard
-  return res.redirect("/attendance/record_dashboard");
+// router.get("/", adminOnly, (req, res) => {
+//   // Send admin to your real attendance dashboard
+//   return res.redirect("/attendance/record_dashboard");
+// });
+
+router.get("/login", (req, res) => {
+  // If already logged in as admin, go dashboard
+  if (req.session?.isAdmin) return res.redirect("/admin");
+
+  // You don't have views/admin/login.ejs, so reuse teachers/index
+  return res.render("teachers/index", {
+    title: "VERICLOCK Login",
+    error: null,
+    adminError: null,
+  });
 });
 
 // ✅ Admin login
