@@ -15,9 +15,9 @@ const SCHOOL_LNG = 3.3500;
 const ALLOWED_RADIUS = 150; // meters
 
 // TIME CONFIG (Nigeria - Africa/Lagos)
-const EARLY_BEFORE_MIN = 13 * 60; // before 06:00 => early
-const LATE_FROM_MIN = 14 * 60;    // 08:00+ => late
-const CLOSE_AT_MIN = 15 * 60;     // 09:00+ => closed (no check-in)
+const EARLY_BEFORE_MIN = 17 * 60; // before 06:00 => early
+const LATE_FROM_MIN = 18 * 60;    // 08:00+ => late
+const CLOSE_AT_MIN = 19 * 60;     // 09:00+ => closed (no check-in)
 
 // ===============================
 // AUTH
