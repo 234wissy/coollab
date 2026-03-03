@@ -1,3 +1,4 @@
+// server.js
 require("dotenv").config();
 
 const express = require("express");
@@ -28,15 +29,10 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/icons", express.static(path.join(__dirname, "icons")));
 
-// Session
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET || "vericlock_secret_change_me",
-//     resave: false,
-//     saveUninitialized: false,
-//   })
-// );
+// ✅ IMPORTANT FOR RENDER / HTTPS (behind proxy)
+app.set("trust proxy", 1);
 
+// ✅ SESSION (persisted in MongoDB)
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "vericlock_secret_change_me",
@@ -48,8 +44,8 @@ app.use(
     }),
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // true on HTTPS
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ critical
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     },
   })
@@ -80,9 +76,6 @@ app.use("/admin", adminRoutes);
 // ===============================
 // ROOT
 // ===============================
-// app.get("/", (req, res) => res.redirect("/teachers/index"));
-
-// for home page to always load
 app.get("/", (req, res) => {
   return res.render("teachers/index", {
     title: "VERICLOCK Login",
@@ -95,14 +88,19 @@ app.get("/", (req, res) => {
 // TEACHER DASHBOARD
 // ===============================
 app.get("/teachers/dashboard", requireTeacher, async (req, res) => {
-  const teacher = await Teacher.findById(req.session.teacherId);
+  try {
+    const teacher = await Teacher.findById(req.session.teacherId);
 
-  if (!teacher) {
-    req.session.destroy(() => {});
-    return res.redirect("/teachers/index");
+    if (!teacher) {
+      req.session.destroy(() => {});
+      return res.redirect("/teachers/index");
+    }
+
+    return res.render("teachers/dashboard", { teacher });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Server error");
   }
-
-  return res.render("teachers/dashboard", { teacher });
 });
 
 // ===============================
@@ -115,19 +113,6 @@ app.post("/logout", (req, res) => {
 // ===============================
 // DB + SERVER START
 // ===============================
-// const PORT = process.env.PORT || 5000;
-
-// mongoose
-//   .connect(process.env.MONGO_URI)
-//   .then(() => {
-//     console.log("MongoDB Connected");
-//     app.listen(PORT, () =>
-//       console.log(`Server running on port ${PORT}`)
-//     );
-//   })
-//   .catch((err) =>
-//     console.log("MongoDB Connection Error:", err.message)
-//   );
 const PORT = process.env.PORT || 5000;
 
 if (!process.env.MONGO_URI) {
