@@ -1,14 +1,9 @@
-// routes/admin.js
 const express = require("express");
 const router = express.Router();
 
-// Admin guard
-function adminOnly(req, res, next) {
-  if (req.session?.isAdmin) return next();
-  return res.redirect("/teachers/index");
-}
+const adminOnly = require("../middleware/adminOnly");
 
-// ✅ Optional: allow GET /admin/login to show login page
+// ✅ GET /admin/login (show login page)
 router.get("/login", (req, res) => {
   if (req.session?.isAdmin) return res.redirect("/admin");
   return res.render("teachers/index", {
@@ -18,14 +13,12 @@ router.get("/login", (req, res) => {
   });
 });
 
-// ✅ Admin landing (requires admin)
-// GET /admin
+// ✅ GET /admin (admin landing)
 router.get("/", adminOnly, (req, res) => {
   return res.redirect("/attendance/record_dashboard");
 });
 
-// ✅ Admin login
-// POST /admin/login
+// ✅ POST /admin/login (process login)
 router.post("/login", (req, res) => {
   const adminId = req.body?.adminId;
   const adminPassword = req.body?.adminPassword;
@@ -36,12 +29,6 @@ router.post("/login", (req, res) => {
       error: null,
       adminError: "Admin ID and password are required.",
     });
-  }
-
-  if (!req.session) {
-    return res.status(500).send(
-      "Session not initialized. Ensure express-session is mounted BEFORE /admin routes."
-    );
   }
 
   const ENV_ADMIN_ID = process.env.ADMIN_ID || "admin";
@@ -58,7 +45,7 @@ router.post("/login", (req, res) => {
   req.session.isAdmin = true;
   req.session.adminId = adminId;
 
-  // ✅ IMPORTANT: save session before redirect
+  // ✅ CRITICAL: save session before redirect (prevents “redirect but not logged in”)
   return req.session.save((err) => {
     if (err) {
       console.error("Session save error:", err);
@@ -68,10 +55,9 @@ router.post("/login", (req, res) => {
   });
 });
 
-// ✅ Admin logout
-// POST /admin/logout
+// ✅ POST /admin/logout
 router.post("/logout", (req, res) => {
-  req.session?.destroy(() => res.redirect("/teachers/index"));
+  req.session?.destroy(() => res.redirect("/admin/login"));
 });
 
 module.exports = router;
