@@ -1,3 +1,4 @@
+// routes/admin.js
 const express = require("express");
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.get("/", adminOnly, (req, res) => {
 });
 
 // ✅ Admin login
-// POST /admin/login  ✅ (because mount already adds /admin)
+// POST /admin/login
 router.post("/login", (req, res) => {
   const adminId = req.body?.adminId;
   const adminPassword = req.body?.adminPassword;
@@ -57,7 +58,14 @@ router.post("/login", (req, res) => {
   req.session.isAdmin = true;
   req.session.adminId = adminId;
 
-  return res.redirect("/attendance/record_dashboard");
+  // ✅ IMPORTANT: save session before redirect
+  return req.session.save((err) => {
+    if (err) {
+      console.error("Session save error:", err);
+      return res.status(500).send("Failed to save session.");
+    }
+    return res.redirect("/attendance/record_dashboard");
+  });
 });
 
 // ✅ Admin logout
