@@ -9,7 +9,7 @@ function adminOnly(req, res, next) {
 
 // ✅ Admin landing (requires admin)
 // GET /admin
-router.get("/admin", adminOnly, (req, res) => {
+router.get("/", adminOnly, (req, res) => {
   // Send admin to your real attendance dashboard
   return res.redirect("/attendance/record_dashboard");
 });
