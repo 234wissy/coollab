@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 const Teacher = require("./models/Teacher");
 
@@ -28,11 +29,29 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/icons", express.static(path.join(__dirname, "icons")));
 
 // Session
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET || "vericlock_secret_change_me",
+//     resave: false,
+//     saveUninitialized: false,
+//   })
+// );
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "vericlock_secret_change_me",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    },
   })
 );
 
