@@ -55,6 +55,8 @@ app.use(
   })
 );
 
+app.use("/admin", adminRoutes);  // ✅ then routes
+
 // Make session values available in EJS
 app.use((req, res, next) => {
   res.locals.isAdmin = !!req.session?.isAdmin;
