@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+const MongoStore = require("connect-mongo").default;
 
 const Teacher = require("./models/Teacher");
 
@@ -42,7 +42,7 @@ app.use(
     secret: process.env.SESSION_SECRET || "vericlock_secret_change_me",
     resave: false,
     saveUninitialized: false,
-    store: MongoStore({
+    store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       collectionName: "sessions",
     }),
