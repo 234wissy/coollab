@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config();
 
 const express = require("express");
@@ -29,10 +28,12 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/icons", express.static(path.join(__dirname, "icons")));
 
-// ✅ IMPORTANT FOR RENDER / HTTPS (behind proxy)
+// ✅ IMPORTANT for Render/Heroku (behind proxy HTTPS)
 app.set("trust proxy", 1);
 
-// ✅ SESSION (persisted in MongoDB)
+// ===============================
+// SESSION
+// ===============================
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "vericlock_secret_change_me",
