@@ -7,16 +7,24 @@ function adminOnly(req, res, next) {
   return res.redirect("/teachers/index");
 }
 
+// ✅ Optional: allow GET /admin/login to show login page
+router.get("/login", (req, res) => {
+  if (req.session?.isAdmin) return res.redirect("/admin");
+  return res.render("teachers/index", {
+    title: "VERICLOCK Login",
+    error: null,
+    adminError: null,
+  });
+});
+
 // ✅ Admin landing (requires admin)
 // GET /admin
 router.get("/", adminOnly, (req, res) => {
-  // Send admin to your real attendance dashboard
   return res.redirect("/attendance/record_dashboard");
 });
 
-
 // ✅ Admin login
-// POST /admin/login
+// POST /admin/login  ✅ (because mount already adds /admin)
 router.post("/login", (req, res) => {
   const adminId = req.body?.adminId;
   const adminPassword = req.body?.adminPassword;
@@ -35,7 +43,6 @@ router.post("/login", (req, res) => {
     );
   }
 
-  // ✅ Use .env credentials
   const ENV_ADMIN_ID = process.env.ADMIN_ID || "admin";
   const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
@@ -50,7 +57,6 @@ router.post("/login", (req, res) => {
   req.session.isAdmin = true;
   req.session.adminId = adminId;
 
-  // ✅ Redirect to admin dashboard page that exists
   return res.redirect("/attendance/record_dashboard");
 });
 
