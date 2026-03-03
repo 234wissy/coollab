@@ -17,7 +17,7 @@ router.get("/", adminOnly, (req, res) => {
 
 // ✅ Admin login
 // POST /admin/login
-router.post("/login", (req, res) => {
+router.post("/", (req, res) => {
   const adminId = req.body?.adminId;
   const adminPassword = req.body?.adminPassword;
 
