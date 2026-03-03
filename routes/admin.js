@@ -9,7 +9,7 @@ function adminOnly(req, res, next) {
 
 // ✅ Admin landing (requires admin)
 // GET /admin
-router.get("/", adminOnly, (req, res) => {
+router.get("/attendance", adminOnly, (req, res) => {
   // Send admin to your real attendance dashboard
   return res.redirect("/attendance/record_dashboard");
 });
@@ -17,7 +17,7 @@ router.get("/", adminOnly, (req, res) => {
 
 // ✅ Admin login
 // POST /admin/login
-router.post("/", (req, res) => {
+router.post("/admin/login", (req, res) => {
   const adminId = req.body?.adminId;
   const adminPassword = req.body?.adminPassword;
 
