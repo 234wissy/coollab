@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attendance Records</title>
+
+  <link rel="stylesheet" href="/css/attendance.css" />
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>Attendance Records Dashboard</h1>
+
+      <div style="display:flex; gap:10px;">
+        <a class="btn btn-primary" href="/teachers/new">
+          + Register Teacher
+        </a>
+      </div>
+
+      <!-- ✅ Mark absentees button -->
+      <form action="/attendance/mark-absent" method="POST" style="margin:0;">
+        <input type="hidden" name="dateKey" value="<%= filters.dateKey || '' %>">
+        <button class="btn btn-primary" type="submit">
+          Mark Absentees (After 9am)
+        </button>
+      </form>
+      
+    </div>
+
+    <% if (typeof markedAbsent !== "undefined") { %>
+      <p style="margin: 0 0 10px; color: #027a48; font-weight: 700;">
+        Marked Absent: <%= markedAbsent %>
+      </p>
+    <% } %>
+    <div class="card">
+
+      <form method="GET" action="/attendance/record_dashboard" class="form-row">
+        <div class="field">
+          <label>Date</label>
+          <!-- ✅ FIX: dateKey not date -->
+          <input type="date" name="dateKey" value="<%= filters.dateKey || '' %>" />
+        </div>
+
+        <div class="field">
+          <label>Teacher</label>
+          <select name="teacherId">
+            <option value="">All</option>
+            <% teachers.forEach(t => { %>
+              <option value="<%= t._id %>" <%= (filters.teacherId === String(t._id)) ? "selected" : "" %>>
+                <%= t.name %> (<%= t.email %>)
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" type="submit">Filter</button>
+        </div>
+
+        <div class="field">
+          <label>&nbsp;</label>
+          <a class="btn" href="/attendance/record_dashboard">Reset</a>
+        </div>
+      </form>
+
+      <% if (!records || records.length === 0) { %>
+        <p style="margin: 0; color: #667085; font-weight: 600;">No records found.</p>
+      <% } else { %>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Teacher</th>
+                <th>Check-In</th>
+                <th>Status</th>
+                <th>Distance (m)</th>
+                <th>IP</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% records.forEach(r => { %>
+                <tr>
+                  <!-- ✅ FIX: dateKey -->
+                  <td><%= r.dateKey || "-" %></td>
+
+                  <td>
+                    <% if (r.teacherId) { %>
+                      <%= r.teacherId.name %>
+                    <% } else { %>
+                      Unknown
+                    <% } %>
+                  </td>
+
+                  <!-- ✅ FIX: checkInTime is Date, format it -->
+                  <td>
+                    <%= r.checkInTime ? new Date(r.checkInTime).toLocaleTimeString() : "-" %>
+                  </td>
+
+                  <td>
+                    <% const s = (r.status || "").toLowerCase(); %>
+
+                    <% if (s === "present") { %>
+                      <span class="pill pill-present">PRESENT</span>
+                    <% } else if (s === "late") { %>
+                      <span class="pill pill-late">LATE</span>
+                    <% } else if (s === "early") { %>
+                      <span class="pill pill-early">EARLY</span>
+                    <% } else if (s === "absent") { %>
+                      <span class="pill pill-absent">ABSENT</span>
+                    <% } else { %>
+                      <span class="pill pill-muted"><%= r.status || "-" %></span>
+                    <% } %>
+                  </td>
+
+                  <td>
+                    <%= (typeof r.distance === "number") ? r.distance.toFixed(2) : "-" %>
+                  </td>
+
+                  <td><%= r.ipAddress || "-" %></td>
+
+                  <td>
+                    <div class="actions">
+                      <!-- Optional view page -->
+                      <!-- <a class="btn" href="/attendance/<%= r._id %>">View</a> -->
+
+                      <form action="/attendance/<%= r._id %>?_method=DELETE" method="POST" style="margin:0;">
+                        <button class="btn btn-danger" type="submit" onclick="return confirm('Delete this record?')">
+                          Delete
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+      <% } %>
+
+    </div>
+  </div>
+</body>
+</html>

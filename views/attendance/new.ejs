@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Attendance</title>
+
+    <!-- Attendance CSS -->
+  <link rel="stylesheet" href="/css/attendance.css" />
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>New Attendance</h1>
+      <a class="btn" href="/attendance">Back</a>
+    </div>
+
+    <div class="card">
+
+      <form class="form-stack" action="/attendance" method="POST">
+
+        <div class="field">
+          <label>Teacher</label>
+          <select name="teacherId" required>
+            <option value="">Select teacher</option>
+            <% teachers.forEach(t => { %>
+              <option value="<%= t._id %>">
+                <%= t.name %> (<%= t.email %>)
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Latitude</label>
+          <input type="number" step="any" name="latitude" placeholder="Enter latitude" required />
+        </div>
+
+        <div class="field">
+          <label>Longitude</label>
+          <input type="number" step="any" name="longitude" placeholder="Enter longitude" required />
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Create</button>
+          <a class="btn" href="/attendance">Cancel</a>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</body>
+</html>

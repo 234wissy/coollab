@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Dashboard</title>
+</head>
+<body>
+
+  <h2>Welcome, <%= teacher.name %></h2>
+
+  <p id="statusText">Automatic attendance is starting...</p>
+  <small id="detailText"></small>
+
+  <script>
+    // Persist one deviceId per browser/device
+    const deviceId = localStorage.getItem("deviceId") || crypto.randomUUID();
+    localStorage.setItem("deviceId", deviceId);
+
+    const statusText = document.getElementById("statusText");
+    const detailText = document.getElementById("detailText");
+
+    let watchingId = null;
+    let locked = false;               // prevents parallel requests
+    let lastAttemptAt = 0;
+    const COOLDOWN_MS = 30 * 1000;    // try at most once per 30 seconds
+    let doneForToday = false;
+
+    function setUI(main, detail = "") {
+      statusText.textContent = main;
+      detailText.textContent = detail;
+    }
+
+    async function sendCheckIn(position) {
+      if (doneForToday || locked) return;
+
+      const now = Date.now();
+      if (now - lastAttemptAt < COOLDOWN_MS) return;
+      lastAttemptAt = now;
+
+      locked = true;
+
+      try {
+        setUI("Checking in...", "Validating your location...");
+
+        const res = await fetch("/attendance/check-in", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            deviceId
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        // Success cases
+        if (res.ok && data.success) {
+          const status = data.attendance?.status || data.status || "present";
+          const dist = data.attendance?.distance;
+
+          setUI(
+            `Attendance recorded: ${status.toUpperCase()}`,
+            dist ? `Distance: ${Number(dist).toFixed(1)}m` : (data.message || "")
+          );
+
+          // Stop watching after a successful check-in OR already checked in
+          doneForToday = true;
+          if (watchingId !== null) navigator.geolocation.clearWatch(watchingId);
+          return;
+        }
+
+        // "Already checked in today" should also stop further calls
+        if (data && typeof data.message === "string" && data.message.toLowerCase().includes("already")) {
+          setUI("Attendance already recorded for today ✅", "");
+          doneForToday = true;
+          if (watchingId !== null) navigator.geolocation.clearWatch(watchingId);
+          return;
+        }
+
+        // Blocked / rejected cases
+        setUI("Attendance not recorded yet", data.message || "Move closer to the school or try again.");
+      } catch (err) {
+        setUI("Network error", "Please check your internet and try again.");
+        console.log(err);
+      } finally {
+        locked = false;
+      }
+    }
+
+    function startAutoAttendance() {
+      if (!("geolocation" in navigator)) {
+        setUI("Geolocation not supported", "Use a GPS-enabled device (Android Chrome).");
+        return;
+      }
+
+      setUI("Automatic attendance is running...", "Please keep location ON.");
+
+      watchingId = navigator.geolocation.watchPosition(
+        sendCheckIn,
+        (err) => {
+          console.log(err);
+          if (err.code === 1) setUI("Location permission denied", "Allow location to mark attendance.");
+          else setUI("Location error", err.message || "Try again.");
+        },
+        { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+      );
+    }
+
+    startAutoAttendance();
+  </script>
+
+</body>
+</html>

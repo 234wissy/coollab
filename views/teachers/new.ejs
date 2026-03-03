@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Teacher</title>
+  <link rel="stylesheet" href="/css/teachers.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="header">
+      <h1>Add Teacher</h1>
+      <a href="/attendance/record_dashboard" class="btn">Back</a>
+    </div>
+
+    <div class="card">
+
+      <% if (error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <!-- ✅ FIX: POST to /teachers -->
+      <form class="form" action="/teachers" method="POST" autocomplete="on">
+
+        <div class="field">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="Enter full name" required />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="Enter email address" required />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Create password" required minlength="6" />
+        </div>
+
+        <div class="field">
+          <label>Device ID (Optional)</label>
+          <input type="text" name="deviceId" placeholder="e.g. ANDROID-12345" />
+        </div>
+
+        <button type="submit" class="btn btn-success">
+          Create Teacher
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+
+</body>
+</html>

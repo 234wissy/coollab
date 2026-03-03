@@ -1,0 +1,281 @@
+/* =========================
+   Attendance Pages (EJS)
+   File: /public/css/attendance.css
+   Works for: index/new/show
+   ========================= */
+
+:root{
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --text: #101828;
+  --muted: #667085;
+  --border: #e4e7ec;
+  --primary: #0a0dc4;
+  --danger: #d92d20;
+  --shadow: 0 10px 25px rgba(16, 24, 40, 0.08);
+  --radius: 14px;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+body{
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* Layout wrapper */
+.container{
+  width: min(1100px, 92%);
+  margin: 28px auto 60px;
+}
+
+/* Header row */
+.header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+h1{
+  font-size: 24px;
+  margin: 0;
+  letter-spacing: 0.2px;
+}
+
+/* Cards */
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+/* Links & Buttons */
+a{
+  color: var(--primary);
+  text-decoration: none;
+}
+a:hover{
+  text-decoration: underline;
+}
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.btn:hover{
+  border-color: #cfd4dc;
+  box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
+}
+.btn:active{
+  transform: translateY(1px);
+}
+
+.btn-primary{
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover{
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(10, 13, 196, 0.25);
+}
+
+.btn-danger{
+  background: #fff;
+  border-color: #f1b7b3;
+  color: var(--danger);
+}
+.btn-danger:hover{
+  border-color: #ee9a93;
+  box-shadow: 0 10px 22px rgba(217, 45, 32, 0.12);
+}
+
+/* Forms */
+.form-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+.field label{
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input, select{
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: #fff;
+  font-size: 14px;
+}
+input:focus, select:focus{
+  border-color: rgba(10, 13, 196, 0.5);
+  box-shadow: 0 0 0 4px rgba(10, 13, 196, 0.10);
+}
+
+/* New page form layout */
+.form-stack{
+  display: grid;
+  gap: 14px;
+  max-width: 520px;
+}
+
+.form-actions{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+/* Table */
+.table-wrap{
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+table{
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px; /* allows scrolling on small screens */
+  background: #fff;
+}
+
+thead th{
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--border);
+  background: #fafafa;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+tbody td{
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+tbody tr:hover{
+  background: #f9fafb;
+}
+
+.actions{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Pills for status */
+.pill{
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+.pill-present{
+  border-color: #a6f4c5;
+  background: #ecfdf3;
+  color: #027a48;
+}
+.pill-outside{
+  border-color: #f9c5c0;
+  background: #fef3f2;
+  color: #b42318;
+}
+.pill-muted{
+  border-color: var(--border);
+  background: #f2f4f7;
+  color: #344054;
+}
+
+/* ✅ Extra pills */
+.pill-early{
+  border-color: #b2ddff;
+  background: #eff8ff;
+  color: #175cd3;
+}
+
+.pill-late{
+  border-color: #fedf89;
+  background: #fffaeb;
+  color: #b54708;
+}
+
+.pill-absent{
+  border-color: #f9c5c0;
+  background: #fef3f2;
+  color: #b42318;
+}
+
+/* Show page key-value */
+.kv{
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 10px 14px;
+  padding: 6px 0;
+}
+.kv .k{
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 13px;
+}
+.kv .v{
+  font-weight: 600;
+}
+
+.hr{
+  height: 1px;
+  background: var(--border);
+  margin: 14px 0;
+}
+
+/* Small screens */
+@media (max-width: 800px){
+  .header{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .form-row{
+    grid-template-columns: 1fr;
+  }
+  .kv{
+    grid-template-columns: 1fr;
+  }
+}
